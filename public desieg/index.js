@@ -51,3 +51,4 @@ function closeModal() {
 modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
 });
+// เกือบล่ะ
