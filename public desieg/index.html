@@ -9,13 +9,18 @@
   </head>
   <body>
     <div class="main-container" id="mainContainer">
-      <audio autoplay>
-        <source
-          src="/Monster Hunter World OST_ Main Menu Theme  HQ _ 4K.mp3"
-          type="audio/mpeg"
-        />
-        Your browser does not support the audio element.
-      </audio>
+      <div class="audio-container">
+        <audio id="myAudio" autoplay>
+          <source
+            src="/Monster Hunter World OST_ Main Menu Theme  HQ _ 4K.mp3"
+            type="audio/mpeg"
+          />
+        </audio>
+
+        <button onclick="toggleMute()" id="muteBtn" class="game-button">
+          🔊 Mute Music
+        </button>
+      </div>
       <div class="section sec1 active">
         <div class="scroll-down" onclick="scrollToSection(1)">
           <div class="arrow"></div>
