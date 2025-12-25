@@ -52,3 +52,31 @@ modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
 });
 // เกือบล่ะ
+function toggleMute() {
+  var audio = document.getElementById("myAudio");
+  var btn = document.getElementById("muteBtn");
+
+  if (audio.paused || audio.muted) {
+    audio.muted = false;
+    audio.play();
+    btn.innerHTML = "🔇 Mute Music";
+  } else {
+    audio.muted = true;
+    btn.innerHTML = "🔊 Unmute Music";
+  }
+}
+
+// THIS IS THE KEY: Browsers require a click to start audio.
+// This starts the music on the visitor's first click anywhere.
+document.addEventListener('click', function() {
+    var audio = document.getElementById("myAudio");
+    var btn = document.getElementById("muteBtn");
+    
+    if (audio.paused) {
+        audio.play().then(() => {
+            btn.innerHTML = "🔇 Mute Music";
+        }).catch(error => {
+            console.log("Autoplay blocked, waiting for user interaction.");
+        });
+    }
+}, { once: true });
