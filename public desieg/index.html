@@ -9,18 +9,15 @@
   </head>
   <body>
     <div class="main-container" id="mainContainer">
+      
       <div class="audio-container">
-        <audio id="myAudio" autoplay>
-          <source
-            src="Monster Hunter World OST_ Main Menu Theme  HQ _ 4K.mp3"
-            type="audio/mpeg"
-          />
-        </audio>
+        <div id="youtube-player"></div>
 
         <button onclick="toggleMute()" id="muteBtn" class="game-button">
           🔊 Mute Music
         </button>
       </div>
+
       <div class="section sec1 active">
         <div class="scroll-down" onclick="scrollToSection(1)">
           <div class="arrow"></div>
@@ -63,6 +60,7 @@
         <div class="close-btn" onclick="closeModal()">&times;</div>
 
         <div class="book-content-scroll">
+          
           <div id="content-great-jagras" class="monster-detail-layout">
             <div class="monster-image-large">
               <img
@@ -124,5 +122,4 @@
 
     <script src="index.js"></script>
   </body>
-  <!-- เกือบล่ะ -->
 </html>

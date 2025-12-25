@@ -51,32 +51,89 @@ function closeModal() {
 modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
 });
-// เกือบล่ะ
-function toggleMute() {
-  var audio = document.getElementById("myAudio");
-  var btn = document.getElementById("muteBtn");
 
-  if (audio.paused || audio.muted) {
-    audio.muted = false;
-    audio.play();
-    btn.innerHTML = "🔇 Mute Music";
-  } else {
-    audio.muted = true;
-    btn.innerHTML = "🔊 Unmute Music";
-  }
+
+// ==========================================================
+// 🟢 [ส่วนระบบเสียง YouTube API]
+// ==========================================================
+
+// 1. โหลด YouTube IFrame Player API แบบอัตโนมัติ
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+// 2. ตั้งค่าตัวเล่น YouTube
+var player;
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('youtube-player', {
+        height: '0',
+        width: '0',
+        videoId: 'po_t8I9FC2Y', // ID เพลง
+        playerVars: {
+            'autoplay': 1,      
+            'loop': 1,          
+            'playlist': 'po_t8I9FC2Y', 
+            'controls': 0,      
+            'showinfo': 0
+        },
+        events: {
+            'onReady': onPlayerReady
+        }
+    });
 }
 
-// THIS IS THE KEY: Browsers require a click to start audio.
-// This starts the music on the visitor's first click anywhere.
-document.addEventListener('click', function() {
-    var audio = document.getElementById("myAudio");
+// 3. เริ่มเล่นเมื่อพร้อม
+function onPlayerReady(event) {
+    event.target.playVideo(); 
+    event.target.setVolume(50); 
+}
+
+// 4. ฟังก์ชันปุ่ม Mute / Unmute
+var isMuted = false;
+function toggleMute() {
     var btn = document.getElementById("muteBtn");
-    
-    if (audio.paused) {
-        audio.play().then(() => {
-            btn.innerHTML = "🔇 Mute Music";
-        }).catch(error => {
-            console.log("Autoplay blocked, waiting for user interaction.");
-        });
+
+    if (player && typeof player.isMuted === 'function') {
+        if (isMuted) {
+            player.unMute();
+            btn.innerHTML = "🔊 Mute Music";
+            isMuted = false;
+        } else {
+            player.mute();
+            btn.innerHTML = "🔇 Unmute Music";
+            isMuted = true;
+        }
     }
-}, { once: true });
+}
+
+// ==========================================================
+// 🟢 [แก้ไขล่าสุด] ดักจับการคลิก (แบบฉลาดขึ้น)
+// ==========================================================
+var hasInteracted = false; // ตัวแปรเช็คว่าเคยคลิกหรือยัง
+
+document.addEventListener('click', function(e) {
+    
+    // 🛑 1. ถ้าคลิกที่ปุ่ม Mute ให้จบฟังก์ชันเลย (ไม่ต้องไปบังคับเปิดเสียง)
+    if (e.target.id === 'muteBtn' || e.target.closest('#muteBtn')) return;
+
+    // 🛑 2. ถ้าเคยคลิกเปิดเพลงไปแล้ว ก็ไม่ต้องทำงานซ้ำ
+    if (hasInteracted) return;
+
+    // สั่งเล่นเพลงและเปิดเสียง (เฉพาะคลิกแรกที่ไม่ใช่ปุ่ม Mute)
+    if (player && typeof player.playVideo === 'function') {
+        player.playVideo();
+        
+        if (player.isMuted()) {
+            player.unMute();
+            player.setVolume(50);
+            
+            // อัปเดตปุ่มให้ตรงกัน
+            isMuted = false;
+            var btn = document.getElementById("muteBtn");
+            if(btn) btn.innerHTML = "🔊 Mute Music";
+        }
+        
+        hasInteracted = true; // จำไว้ว่าคลิกแล้วนะ
+    }
+});
